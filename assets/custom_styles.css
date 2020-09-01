@@ -221,7 +221,7 @@ html, body {
     background-color: #272a31;
 }
 
-#interactive-image {
+#image {
     max-width: 100%
 }
 
@@ -235,19 +235,19 @@ html, body {
 }
 
 @media (min-width: 1311px) {
-    #div-interactive-image, #interactive-image {
+    #div-image, #image {
         height: 45rem;
     }
 }
 
 @media (max-width: 600px) {
-    #div-interactive-image, #interactive-image {
+    #div-image, #image {
         height: 30rem;
     }
 }
 
 @media (max-width: 500px) {
-    #div-interactive-image, #interactive-image {
+    #div-image, #image {
         height: 20rem;
     }
 }
@@ -323,7 +323,7 @@ html, body {
 }
 
 /*Button*/
-#button-run-operation, #button-undo {
+#button-apply-style, #button-undo {
     background-color: #31343a;
     border: #fccd61 solid 1px;
     padding: 0.5rem 1rem;
@@ -331,7 +331,7 @@ html, body {
     color: darkgray;
 }
 
-#button-run-operation:hover, #button-undo:hover {
+#button-apply-style:hover, #button-undo:hover {
     color: white;
     cursor: pointer;
 }
@@ -350,16 +350,16 @@ html, body {
 }
 
 /*Slider Wrapper*/
-#div-enhancement-factor {
+#div-style-weight {
     display: none;
     margin: 25px 5px 30px 0;
 }
 
-#div-enhancement-factor div {
+#div-style-weight div {
     margin-left: 5px;
 }
 
-#button-run-operation {
+#button-apply-style {
     margin: 5px 10px 0 0;
 }
 

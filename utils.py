@@ -21,6 +21,7 @@ IMAGE_STRING_PLACEHOLDER = drc.pil_to_b64(
     enc_format="jpeg",
 )
 
+
 GRAPH_PLACEHOLDER = dcc.Graph(
     id="interactive-image",
     figure={
