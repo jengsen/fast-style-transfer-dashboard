@@ -41,9 +41,9 @@ def stylize_image(image_path, style, style_weight):
     transformer = TransformerNet()
     ckpt = tf.train.Checkpoint(transformer=transformer)
     # ckpt.restore(tf.train.latest_checkpoint(args.log_dir)).expect_partial()
-    model_path = f'models/style/{style}_sw{style_weights[style_weight]}'
-    ckpt.restore(tf.train.latest_checkpoint(model_path)).expect_partial()
-    # ckpt.restore(tf.train.latest_checkpoint('/model/style/la_muse_contentlayer33_sw100')).expect_partial()
+    # model_path = f'models/style/{style}_sw{style_weights[style_weight]}'
+    # ckpt.restore(tf.train.latest_checkpoint(model_path)).expect_partial()
+    ckpt.restore(tf.train.latest_checkpoint('models/style/udnie_celeba_sw100')).expect_partial()
     print('ckpt')
 
     transformed_image = transformer(image)
@@ -59,5 +59,20 @@ def stylize_image(image_path, style, style_weight):
     return output_path
 
 
-# if __name__ == "__main__":
-#     stylize_image("n", "udnie", 2)
+if __name__ == "__main__":
+    stylize_image("Pierre.jpg", "udnie", 2)
+    
+    # image = load_img('Pierre.jpg')
+    
+    # transformer = TransformerNet()
+    # ckpt = tf.train.Checkpoint(transformer=transformer)
+    # # ckpt.restore(tf.train.latest_checkpoint(args.log_dir)).expect_partial()
+    # ckpt.restore(tf.train.latest_checkpoint('models/style/udnie_celeba_sw100')).expect_partial()
+
+    # transformed_image = transformer(image)
+    # transformed_image = tf.cast(
+    #     tf.squeeze(transformed_image), tf.uint8
+    # ).numpy()
+
+    # img = Image.fromarray(transformed_image, mode="RGB")
+    # img.save('la_muse_contentlayer33_sw100.png')
