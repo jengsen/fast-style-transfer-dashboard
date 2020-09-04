@@ -10,7 +10,7 @@ import plotly.graph_objs as go
 from PIL import Image
 
 # Variables
-HTML_IMG_SRC_PARAMETERS = "data:image/png;base64, "
+HTML_IMG_SRC_PARAMETERS = "data:image/png;base64,"
 
 
 # Display utility functions

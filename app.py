@@ -133,9 +133,9 @@ def serve_layout():
                     html.Div(
                         id="banner",
                         children=[
-                            # html.Img(
-                            #     id="logo", src=app.get_asset_url("dash-logo-new.png")
-                            # ),
+                            html.Img(
+                                id="logo", src=app.get_asset_url("Camera_photo.svg")
+                            ),
                             html.H2("Neural Style Transfert", id="title"),
                         ],
                     ),
@@ -549,23 +549,19 @@ def update_uploaded_image(list_of_contents, n_clicks, filename,
                 # CREATE the new image with selected style
                 string = list_of_contents.split(";base64,")[-1]
                 image = drc.b64_to_pil(string)
-                # print(image)
-                # stylized_image = stylize_image(image, style, style_weight)
-                # print(stylized_image)
-                stylized_image = 'test_save_image.png'
+                image_path = f'images/input/{filename}'
+                image.save(image_path)
+                print('image')
+                stylized_image = stylize_image(image_path, style, style_weight)
                 print('stylized_image')
-                # b64_stylized_image = drc.pil_to_b64(
-                #     Image.open(os.path.join(APP_PATH, stylized_image)).copy(),
-                #     enc_format="png",
-                #     )
-                b64_stylized_image = drc.pil_to_b64(Image(stylized_image))
+                b64_stylized_image = drc.pil_to_b64(Image.open(stylized_image))
                 
-                print(b64_stylized_image)
+                print('b64_stylized_image')
                 # CALL MODEL
                 return [
                     html.Img(
                         id="image",
-                        src=b64_stylized_image
+                        src=drc.HTML_IMG_SRC_PARAMETERS + drc.pil_to_b64(Image.open('test_save_image.png'))
                     ),
                     html.Div(
                         id="div-storage", children=json.dumps(storage),
@@ -580,7 +576,7 @@ def update_uploaded_image(list_of_contents, n_clicks, filename,
         return [
             html.Img(
                 id="image",
-                src=app.get_asset_url('default.jpg')
+                src=drc.HTML_IMG_SRC_PARAMETERS + drc.pil_to_b64(Image.open('test_save_image.png'))
             ),
             html.Div(
                 id="div-storage", children=json.dumps(storage),
