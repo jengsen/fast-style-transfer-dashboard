@@ -1,0 +1,5 @@
+model/*
+models/*
+.vscode/
+__pychache__/*
+settings.json

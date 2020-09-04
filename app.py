@@ -18,6 +18,7 @@ from flask_caching import Cache
 
 import dash_reusable_components as drc
 import utils
+from style import stylize_image
 
 DEBUG = True
 LOCAL = True
@@ -132,10 +133,10 @@ def serve_layout():
                     html.Div(
                         id="banner",
                         children=[
-                            html.Img(
-                                id="logo", src=app.get_asset_url("dash-logo-new.png")
-                            ),
-                            html.H2("Image Processing App", id="title"),
+                            # html.Img(
+                            #     id="logo", src=app.get_asset_url("dash-logo-new.png")
+                            # ),
+                            html.H2("Neural Style Transfert", id="title"),
                         ],
                     ),
                     html.Div(
@@ -147,7 +148,8 @@ def serve_layout():
                             # utils.GRAPH_PLACEHOLDER,
                             html.Img(
                                 id="image",
-                                src=app.get_asset_url("default.jpg")
+                                # src=app.get_asset_url("default.jpg")
+                                src=utils.IMAGE_STRING_PLACEHOLDER
                             ),
                             html.Div(
                                 id="div-storage",
@@ -218,17 +220,6 @@ def serve_layout():
                                 searchable=False,
                                 placeholder="Style...",
                             ),
-                            # drc.CustomDropdown(
-                            #     id="dropdown-enhance",
-                            #     options=[
-                            #         {"label": "Brightness", "value": "brightness"},
-                            #         {"label": "Color Balance", "value": "color"},
-                            #         {"label": "Contrast", "value": "contrast"},
-                            #         {"label": "Sharpness", "value": "sharpness"},
-                            #     ],
-                            #     searchable=False,
-                            #     placeholder="Enhance...",
-                            # ),
                             html.Div(
                                 id="div-style-weight",
                                 children=[
@@ -240,7 +231,7 @@ def serve_layout():
                                             max=3,
                                             step=1,
                                             value=2,
-                                            updatemode="drag",
+                                            # updatemode="drag",
                                         )
                                     ),
                                 ],
@@ -529,58 +520,73 @@ def apply_actions_on_image(session_id, action_stack, filename, image_signature):
 )
 def update_uploaded_image(list_of_contents, n_clicks, filename,
                           style, style_weight, storage, session_id):
-    print(dash.callback_context.triggered['prop_id'])
     print("update_uploaded_image")
     storage = json.loads(storage)
-
-    # if upload-image triggered the callback
+    # if an image was loaded
     if list_of_contents is not None:
-        print('list of contents')
-        storage["filename"] = filename
-        string = list_of_contents.split(";base64,")[-1]
-        storage["image_signature"] = string[0:200]
-        storage["image_string"] = list_of_contents
-        return [
-            html.Img(
-                id="image",
-                src=list_of_contents
-            ),
-            html.Div(
-                id="div-storage",
-                children=json.dumps(storage),
-                style={"display": "none"}
-            )
-        ]
-    else:
-        print('not list of contents')
-        if style is not None:
-            print('style')
-            # CREATE the new image with selected style
-            image_string = storage["image_string"]
+        # if the callback was triggered by the upload-image module
+        if "upload-image" in dash.callback_context.triggered[0].get('prop_id'):
+            print('list of contents')
+            storage["filename"] = filename
+            string = list_of_contents.split(";base64,")[-1]
+            storage["image_signature"] = string[0:200]
+            storage["image_string"] = list_of_contents
             return [
                 html.Img(
                     id="image",
-                    src=image_string
+                    src=list_of_contents
                 ),
                 html.Div(
-                    id="div-storage", children=json.dumps(storage),
+                    id="div-storage",
+                    children=json.dumps(storage),
                     style={"display": "none"}
-                ),
-                html.Div(id="div-style-text",
-                         children=f'Style : {style} with weight {style_weight} applied'
                 )
             ]
         else:
-            return [
-                html.Img(
-                    id="image",
-                    src=app.get_asset_url("default.jpg")
-                ),
-                html.Div(
-                    id="div-storage", children=json.dumps(storage),
-                    style={"display": "none"}
-                )
-            ]
+            print('not list of contents')
+            if style is not None:
+                print('style')
+                # CREATE the new image with selected style
+                string = list_of_contents.split(";base64,")[-1]
+                image = drc.b64_to_pil(string)
+                # print(image)
+                # stylized_image = stylize_image(image, style, style_weight)
+                # print(stylized_image)
+                stylized_image = 'test_save_image.png'
+                print('stylized_image')
+                # b64_stylized_image = drc.pil_to_b64(
+                #     Image.open(os.path.join(APP_PATH, stylized_image)).copy(),
+                #     enc_format="png",
+                #     )
+                b64_stylized_image = drc.pil_to_b64(Image(stylized_image))
+                
+                print(b64_stylized_image)
+                # CALL MODEL
+                return [
+                    html.Img(
+                        id="image",
+                        src=b64_stylized_image
+                    ),
+                    html.Div(
+                        id="div-storage", children=json.dumps(storage),
+                        style={"display": "none"}
+                    ),
+                    html.Div(
+                        id="div-style-text",
+                        children=[f'Style : {style} with weight {style_weight} applied']
+                    )
+                ]
+    else:
+        return [
+            html.Img(
+                id="image",
+                src=app.get_asset_url('default.jpg')
+            ),
+            html.Div(
+                id="div-storage", children=json.dumps(storage),
+                style={"display": "none"}
+            )
+        ]
 
 
 # Show/Hide Callbacks
@@ -591,17 +597,16 @@ def update_uploaded_image(list_of_contents, n_clicks, filename,
 )
 def show_slider_style_weight(value, style):
     # If any style is selected modifies
-    # the style css display value
-    print("show_slider_style_weight")
-    if value:
-        style["display"] = "block"
+    # the style display value
+    print("show_slider_style_weight : ", value, style)
+
+    if value is not None:
+        return {"display": "block"}
     else:
-        style["display"] = "none"
-
-    return style
+        return {"display": "None"}
 
 
-# # Reset Callbacks
+# Reset Callbacks
 # @app.callback(
 #     Output("dropdown-style", "value"),
 #     [Input("button-apply-style", "n_clicks")]
@@ -620,4 +625,4 @@ def show_slider_style_weight(value, style):
 
 # Running the server
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, dev_tools_ui=True)
